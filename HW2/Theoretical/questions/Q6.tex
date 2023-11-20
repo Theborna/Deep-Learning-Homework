@@ -1,0 +1,68 @@
+\section{سوال 6}
+
+تابع خطا در یک شبکه با اعمال Dropout گوسی-جمعی به شکل زیر است:
+
+\[
+	J_1=\frac{1}{2}\left(y_d-\sum_{k=1}^{n}(w_k+\delta_k)x_k\right)^2
+\]
+
+که در آن $\delta_k\sim N(0,\alpha w_k^2)$ می باشد.
+
+\begin{enumerate}
+	\item {
+	      مقدار امید ریاضی گرادیان تابع هدف نسبت به متغیر $w_k$ را محاسبه و تا حد امکان ساده کنید.
+
+	      \begin{qsolve}[]
+		      \begin{align*}
+			      \expected{\pderiv{J_1}{w_k}} & = \pderiv{\expected{J_1}}{w_k} \\
+			      \expected{J_1}               & =
+			      \expected{
+				      \frac{1}{2}\left(y_d-\sum_{k=1}^{n}\overbrace{(w_k+\delta_k)}^{\tilde{w}_k}x_k\right)^2
+			      }=\expected{
+				      \frac{1}{2}\left(y_d-\tilde{w}^Tx\right)^2
+			      }                                                             \\
+			                                   & =\frac{1}{2}\expected{
+				      y_d^2-2y_d\tilde{w}^Tx+(\tilde{w}^Tx)\tilde{w}^Tx
+			      }=\frac{1}{2}\expected{
+				      y_d^2-2y_d\tilde{w}^Tx+x^T\tilde{w}\tilde{w}^Tx
+			      }
+		      \end{align*}
+
+		      فرض میکنیم کوواریانس $\delta_k$ ها با هم صفر باشد، در آن صورت:
+
+              \vspace*{-3em}
+		      \begin{align*}
+			      \expected{\tilde{w}^T}                 & = w^T                                                  \\
+			      \expected{(\tilde{w}\tilde{w}^T)_{ij}} & =\expected{(w_i+\delta_i)(w_j+\delta_j)}=
+			      \expected{w_iw_j+\delta_i\delta_j+\delta_iw_j+\delta_jw_i}=w_iw_j+\expected{\delta_i\delta_j} \\
+			      \expected{\tilde{w}\tilde{w}^T}        & =ww^T+\alpha\Sigma,\quad \Sigma_{i,j}=
+			      \begin{cases}
+				      0     & i\neq j \\
+				      w_i^2 & i=j
+			      \end{cases}                                                                               \\
+			      \expected{J_1}                         & =\frac{1}{2}\left(y_d^2-2y_dw^Tx+x^T(ww^T+\alpha\Sigma)x\right)
+                  \\
+                  &=\frac{1}{2}\left(y_d^2-2y_dw^Tx+(w^Tx)^2+\alpha x^T\Sigma x\right)\\
+                  &= \frac{1}{2}\left(y_d^2-2y_d\sum_{i=1}^{n}w_ix_i+\left(\sum_{i=1}^{n}w_ix_i\right)^2+\alpha\sum_{i=1}^{n}w_i^2x_i^2\right)\\
+                  &= \frac{1}{2}\left(y_d-\sum_{i=1}^{n}w_ix_i\right)^2+\frac{1}{2}\alpha\sum_{i=1}^{n}w_i^2x_i^2=J_0+\frac{1}{2}\alpha\sum_{i=1}^{n}w_i^2x_i^2\\
+                  \expected{\pderiv{J_1}{w_k}} & = \pderiv{\expected{J_1}}{w_k} = 
+                  -\left(y_d-\sum_{i=1}^{n}w_ix_i\right)x_k+\alpha w_k x_k^2=\nabla J_0 + \alpha w_kx_k^2
+		      \end{align*}
+		      \centerline{
+			      \hl{$ \expected{\pderiv{J_1}{w_k}}=-\left(y_d-\sum_{i=1}^{n}w_ix_i\right)x_k+\alpha w_k x_k^2$}
+		      }
+	      \end{qsolve}
+	      }
+          \item {
+            آیا می توانید تعبیری از رگولاسیون با استفاده از این نوع Dropout ارائه دهید؟
+
+            \begin{qsolve}[]
+                از روی رابطه بدست آمده 
+                $\expected{J_1}=J_0+\frac{1}{2}\alpha\sum_{i=1}^{n}w_i^2x_i^2$ 
+                واضح است که به طور میانگین تاثیر Dropout معرفی شده دقیقا مانند $l_2-\text{regularization}$ 
+                عمل میکند و گرادیان ها و تابع هزینه را تغییر میدهد.
+
+                صرفا با این تفاوت که چون به صورت جمعی انجام داده ایم، با ضریب اهمیت هر داده $x_k$ اعمال میشود.
+            \end{qsolve}
+          }
+\end{enumerate}

@@ -1,0 +1,110 @@
+\section{سوال 3}
+
+\begin{enumerate}
+	\item {
+	      یک شبکه ی عصبی با ورودی x را در نظر بگیرید. برای بدست آوردن خروجی محاسبات زیر بر روی
+	      x انجام می شود.
+
+	      \begin{gather*}
+		      z=wx+b\\
+		      y=\sigma(z)\\
+		      L=\frac{1}{2}(y-t)^2\\
+		      R = \frac{1}{2}w^2\\
+		      L_{reg}=L+\lambda R
+	      \end{gather*}
+
+	      گراف محاسباتی این مسئله را رسم کنید و مشتقات $L_{reg}$ را نسبت به همه متغیرها بدست آورید.
+
+	      \begin{qsolve}[]
+		      \begin{center}
+			      \begin{tikzpicture}[
+				      node distance=3cm,
+				      >={Latex[length=2mm]},
+				      layer/.style={draw, circle, minimum size=1.5cm, align=center},
+				      operation/.style={above=0.1cm, align=center},
+				      ]
+
+				      % Nodes
+				      \node[layer, label=above:Input Layer] (x) {$x$};
+				      \node[layer, right=of x, label=above:Hidden Layer] (z) {$z$};
+				      \node[layer, right=of z, label=above:Output Layer] (y) {$y$};
+
+				      % Arrows with operations
+				      \draw[->] (x) -- node[operation] {$z = wx + b$} (z);
+				      \draw[->] (z) -- node[operation] {$y = \sigma(z)$} (y);
+
+			      \end{tikzpicture}
+
+			      خروجی $y$ باید به مقدار واقعی $t$ نزدیک باشد، در نتیجه تابع هدف را به صورت زیر تعریف کرده ایم:
+			      \[
+				      \mathcal{L}(x;w,b)=\frac{1}{2}(y(x;w,b)-t)^2+\frac{\lambda}{2}w^2
+			      \]
+			      \captionof{figure}{گراف محاسباتی}
+		      \end{center}
+
+		      \vspace*{-2em}
+
+		      \begin{align*}
+			      \pderiv{L_{reg}}{w}       & =\lambda w+\pderiv{L}{w}=\lambda w + \pderiv{L}{y}\cdot\pderiv{y}{z}\cdot\pderiv{z}{w}=\lambda w + x(y-t)\sigma'(z) \\
+			      \pderiv{L_{reg}}{b}       & =\pderiv{L}{y}\cdot\pderiv{y}{z}\cdot\pderiv{z}{b}=(y-t)\sigma'(z)                                                  \\
+			      \pderiv{L_{reg}}{x}       & =\pderiv{L}{x}=\pderiv{L}{y}\cdot\pderiv{y}{z}\cdot\pderiv{z}{x}
+			      =(y-t)\cdot\sigma'(z)\cdot w                                                                                                                    \\
+			      \pderiv{L_{reg}}{t}       & =\pderiv{L}{t}=-(y-t)                                                                                               \\
+			      \pderiv{L_{reg}}{\lambda} & = R = \frac{1}{2}w^2                                                                                                \\
+			      \sigma'(z)                & =\deriv{\sigma(z)}{z}=\sigma(z)(1-\sigma(z))                                                                        \\
+		      \end{align*}
+
+		      \vspace*{-2em}
+
+		      که البته برای مسئله ما، تنها $\pderiv{L_{reg}}{w}$ و $\pderiv{L_{reg}}{b}$ اهمیت دارند، زیرا آنها پارامتر هایی اند که بهینه سازی میکنیم،
+		      باقی مشتقات ممکن است برای تحلیل های متفاوتی مورد استفاده قرار بگیرند.
+
+		      روند بهینه سازی به شکل زیر است:
+
+		      \vspace*{-2em}
+
+		      \begin{gather*}
+			      w_{t+1} = w_{t} - \alpha \pderiv{L_{reg}}{w}\\
+			      b_{t+1} = b_{t} - \alpha \pderiv{L_{reg}}{b}\\
+		      \end{gather*}
+
+		      \vspace*{-2em}
+
+	      \end{qsolve}
+	      }
+	\item {
+	      پارامتر های یک شبکه عصبی در ابتدا به صورت تصادفی و با مقادیر کوچک مقداردهی می شوند.
+	      توضیح دهید در صورت عدم رعایت این دو ویژگی در مقداردهی چه مشکلاتی بروز پیدا می کند.
+
+	      \begin{qsolve}[]
+		      مقدار دهی بزرگ پارامتر ها 2 مشکل همراه با خود دارد، تابع فعالیت هایی مانند تابع سیگموید در محاسبات استفاده کرده ایم،
+		      بزرگ بودن وزن ها موجع به اشباع شدن این تابع فعالیت و از بین رفتن گرادیان آن در نتیحه یادگیری کند میشود،
+		      همچنین بزرگ بودن این وزن ها با توجه به جمله های رگولارازیسیون ممکن است موجب ناپایداری گرادیان ها و مشکل در میل کردن بشود.
+	      \end{qsolve}
+	      }
+
+	\item {
+	      وزن های شبکه ی عصبی بدست آمده در قسمت اول را با مقادیر تصادفی دلخواه مقداردهی کنید و برای
+	      یک ورودی دلخواه، با توجه به مشتقاتی که در قسمت اول بدست آوردید، با اعمال بهینه سازی گرادیان
+	      کاهشی برای یک ایپاک با نرخ یادگیری ۰٫۱ ، وزن های شبکه را آپدیت کنید.
+
+	      \begin{qsolve}[]
+		      \begin{align*}
+			      \letm               & : \lambda = 0.1,\quad \alpha = 0.1                                               \\
+			      t  =0               & :\quad w_0 = 0.1,\quad b_0 = 0.1                                                 \\
+			      y                   & = \sigma(wx+b) \Rightarrow y_0 = \sigma(0.1x-0.1),\quad\sigma'(z_0) = y_0(1-y_0) \\
+			      \pderiv{L_{reg}}{w} & =\lambda w + x(y-t)\sigma'(z) \Rightarrow  0.1\cdot0.1+x(y_0-t)y_0(1-y_0)        \\
+			      \pderiv{L_{reg}}{b} & =(y-t)\sigma'(z) = (y_0-t)y_0(1-y_0)                                             \\
+			                          & \Rightarrow
+			      \begin{cases}
+				      w_1 = w_0 - 0.1 \pderiv{L_{reg}}{w} & = 0.1\cdot(0.99) + xy_0(1-y_0)(y_0-t) \\
+				      b_1 = b_0 - 0.1 \pderiv{L_{reg}}{b} & = 0.1 - y_0(1-y_0)(y_0-t)
+			      \end{cases}     \\
+			      y_1                 & = \sigma(w_1x+b_1)                                                               \\
+			      L'_{reg}            & =
+			      \frac{{\left(y_1-t\right)}^2}{2}+\frac{{\left(\frac{y_0\,x\,\left(y_0-t\right)\,\left(y_0-1\right)}{10}+\frac{99}{1000}\right)}^2}{20}
+		      \end{align*}
+	      \end{qsolve}
+	      }
+\end{enumerate}
+

@@ -1,0 +1,88 @@
+\section{سوال 5}
+
+تصور کنید که تابع هدف یک مدل یادگیری ماشین به صورت $w^THw$ باشد که اگر از تجزیه
+مقادیر ویژه استفاده کنیم خواهیم داشت:
+
+\[
+	H=Q\lambda Q^T
+\]
+
+\begin{enumerate}
+	\item {
+	      اگر از روش گرادیان کاهشی با طول گام $\epsilon$ استفاده کنیم، فرمول یادگیری ضرایب به چه صورت است؟
+
+	      \begin{qsolve}[]
+		      کافیست گرادیان را محاسبه کنیم و سپس از رابطه $w_{t+1}= w_t-\alpha \nabla_t\mathcal{L} $ استفاده کنیم.
+		      \begin{gather*}
+			      H^T=(Q\lambda Q^T)^T = Q\lambda^T Q^T = Q\lambda Q^T = H\\
+			      \pderiv{\mathcal{L}}{w}=\pderiv{w^THw}{w}=(H+H^T)w=2Hw\\
+			      w_{t+1} =w_t - \alpha(2Hw_t)\Rightarrow w_{t+1}= (I-2\alpha H)w_t=Q(I-2\alpha \lambda)Q^T w_t
+		      \end{gather*}
+		      \centerline{\hl{$w_{t+1}=Q(I-2\alpha \lambda)Q^T w_t$}}
+	      \end{qsolve}
+	      }
+	\item {
+	      با شروع از حالت اولیه $w_0$ ضرایب در گام t به چه صورت خواهد بود؟
+
+	      \begin{qsolve}[]
+		      \begin{align*}
+			      w_t & =\left[Q(I-2\alpha \lambda)Q^T\right]^tw_0=\overbrace{Q(I-2\alpha \lambda)Q^T\dots Q(I-2\alpha \lambda)Q^T}^tw_0 \\
+			          & =Q\underbrace{(I-2\alpha\lambda)^t}_{S}Q^Tw_0
+			      =Q\begin{bmatrix}
+				        (1-2\alpha\lambda_1)^t & 0                      & \dots  & 0                      \\
+				        0                      & (1-2\alpha\lambda_2)^t & \dots  & 0                      \\
+				        \vdots                 &                        & \ddots & \vdots                 \\
+				        0                      & \dots                  &        & (1-2\alpha\lambda_n)^t
+			        \end{bmatrix}Q^Tw_0
+		      \end{align*}
+		      \centerline{\hl{$w_t=QSQ^Tw_0$}}
+	      \end{qsolve}
+	      }
+	\item {
+	      تحت چه شرایطی این الگوریتم همگرا می شود؟
+
+	      \begin{qsolve}[]
+		      برای همگرایی، نیاز است ماتریس $S$ همگرا شود، که نیاز است تمامی المان های روی قطر همگرا شوند، برای این منظور لازم است
+		      که:
+		      \[
+			      \forall i\in\{1,\dots,n\}: |1-2\alpha\lambda_i|\leq1\Rightarrow -1\leq 1-2\alpha \lambda_i\leq1
+			      \Rightarrow
+			      \begin{cases}
+				      \lambda_i\geq 0 \\
+				      \alpha\lambda_i\leq 1
+			      \end{cases}
+		      \]
+		      که به بیان دیگر میتوان گفت که باید $H$ یک ماتریس مثبت معین باشد و نرخ یادگیری کوچک تر از $\frac{1}{\lambda_{max}}$ باشد.
+	      \end{qsolve}
+	      }
+	      \clearpage
+	\item {
+	      حال بررسی کنید اگر از روش نیوتن استفاده کنیم، یادگیری به چه صورت خواهد بود؟ چند گام طول می
+	      کشد تا همگرا شویم؟
+
+	      \begin{qsolve}[]
+            ابتدا ماتریس ژاکوبی را محاسبه میکنیم.
+		      \begin{gather*}
+                J=\left[\pderiv{\nabla \mathcal{L}(W)}{W}\right]^T=\left[\pderivv{2Hw}{W}\right]^T=\left[2H\right]^2=2H^T=2H\\
+                w \leftarrow w - J^{-1}\left[\nabla \mathcal{L}\right]=w-2^{-1}H^{-1}(2Hw)=w-w=0
+		      \end{gather*}
+              مسئله در اولین مرحله همگرا میشود، زیرا تابع هدف تابعی درجه 2 است و روش نیوتون حل با تقریب 
+              درجه دوم برای تابع هدف است.
+	      \end{qsolve}
+	      }
+	\item {
+	      چرا با وجود اینکه روش مرتبه ۲ نیوتن از روش مرتبه 1 گرادیان کاهشی بسیار سریع تر همگرا می شود،
+	      در آموزش شبکه های عمیق از آن استفاده نمی شود؟
+
+          \begin{qsolve}[]
+            زیرا هم از لحاظ زمان محاسباتی سنگین است، زیرا بطور کلی محاسبه ماتریس ژاکوبی $\order{n^2}$
+            زمان برده و حال محاسبه معکوس آن $\order{n^3}$ زمان میبرد که در شبکه های عمیق اصلا قابل انجام نیست.
+
+            از لحاظ استفاده مموری نیز ما نیاز به ذخیره کل ماتریس ژاکوبی داریم برای روش نیوتون در نتیجه برای شبکه های عمیق که تعداد پارامتر 
+            ها از مرتبه $1M\sim 1B$ پارامتر است، اصلا قابل انجام نیست زیرا $\order{n^2}$ مقدار باید ذخیره و محاسبه شوند.
+
+            روش های مرتبه 2 ای برای شبکه های عمیق معرفی شده اند که برخی از آنها با تخمین زدن ماتریس هسین این کار را انجام میدهند مانند. 
+            \cite{yao2021adahessian}
+          \end{qsolve}
+	      }
+\end{enumerate}

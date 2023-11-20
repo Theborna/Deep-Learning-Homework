@@ -1,0 +1,74 @@
+\section{سوال 4}
+
+الگوریتم آدام برای آموزش وزن های یک شبکه عصبی به صورت تکراری گام های زیر را اجرا میکند:
+
+\begin{gather*}
+	g_t \leftarrow  \nabla_\theta f_t(\theta_{t-1})\\
+	m_t \leftarrow \beta_1m_{t-1}+(1-\beta_1)g_t\\
+	v_t \leftarrow \beta_2v_{t-1}+(1-\beta_2)g_t^2\\
+	\hat{m}_t \leftarrow \frac{m_t}{1-\beta_1^t}\\
+	\hat{v}_t \leftarrow \frac{v_t}{1-\beta_2^t}\\
+	\theta_t\leftarrow \theta_{t-1}-\frac{\alpha\hat{m}_t}{\sqrt{\hat{v}_t}+\epsilon}
+\end{gather*}
+
+\begin{enumerate}
+	\item {
+	      الگوریتم بالا را خط به خط توضیح دهید.
+	      \begin{qsolve}[]
+		      \begin{itemize}
+			      \item \textbf{$g_t \leftarrow  \nabla_\theta f_t(\theta_{t-1})$ : } محسابه گرادیان و ذخیره آن در $g_t$, که گرادیان در زمان $t$ است.
+			      \item {
+			            \textbf{$m_t \leftarrow \beta_1m_{t-1}+(1-\beta_1)g_t$ : }
+			            محاسبه $m_t$ که بردار سرعت ما در زمان $t$ است، این سرعت رو با استفاده از تکانه(momemntum) محاسبه میکنیم، و ضریب تکانه را $\beta_1$ در نظر گرفته ایم.
+			            اینگونه که برای آپدیت کردن سرعت، سرعت لحظه قبل را نیز در نظر میگیریم، بطوری این میانگین نمایی گرادیان است.(\lr{exponential smoothing})
+			            }
+			      \item {
+			            \textbf{$v_t \leftarrow \beta_2v_{t-1}+(1-\beta_2)g_t^2$ : }
+			            در اینجا تخمین توان 2 تکانه خود را آپدیت میکنیم، اینجا نیز مانند مرحله قبل میانگین نمایی را استفاده میکنیم و مقدار قبلی را نیز در نظر میگیریم.
+			            }
+			      \item {
+			            \textbf{$\hat{m}_t \leftarrow \frac{m_t}{1-\beta_1^t}$ : }
+			            اینجا بایاس به صفر را در تکانه را حذف میکنیم.
+			            }
+			      \item {
+			            \textbf{$\hat{v}_t \leftarrow \frac{v_t}{1-\beta_2^t}$ : }
+			            اینجا بایاس به صفر را در تکانه دوم را حذف میکنیم.
+			            }
+			      \item {
+			            \textbf{$\theta_t\leftarrow \theta_{t-1}-\frac{\alpha\hat{m}_t}{\sqrt{\hat{v}_t}+\epsilon}$}
+			            در اینجا هم استپ نهایی و هدف اپتیمایزیشن، یعنی آپدیت کردن پارامتر ها طبق تکانه است.
+			            $\alpha$ در اینجا نرخ یادگیری است، با محاسبه $\frac{\hat{m}_t}{\sqrt{\hat{v}_t}}$ در واقع گرادیان نورمالیزه را حساب میکنیم تا منجر به ناپایداری نشود،
+			            اضافه کردن $\epsilon$ به مخرج صرفا برای جلوگیری از زیاد شدن سرعت در صورت کوچک بودن $\sqrt{\hat{v}_t}$ می باشد.
+			            }
+		      \end{itemize}
+	      \end{qsolve}
+	      }
+	\item {
+	      نشان دهید چرا مقادیر $m_t$ به سمت صفر بایاس دارند؟ چرا مقدار $\hat{m}_t$ که به شکل $\frac{m_t}{1-\beta_1^t}$ محاسبه میشود (در $t$ های با مقادیر کمتر) با این مشکل رو به رو نمیشود؟
+
+	      (توجه کنید که مقدار اولیه $m_0=0$ است.)
+
+          \begin{qsolve}[]
+            در واقع ما در محاسبه $m_t$(تحلیل مشابه برای $v_t$) هدف بر تخمین زدن گرادیان واقعی را داریم، حال ما در تخمین خود با یک
+            \lr{moving average}، وقتی با $m_0=0$ شروع میکنیم واضح است که تخمین ما در زمان های اولیه بسیار به سمت این $m_0$ بایاس شده است.
+
+            اینگونه بایاس را درست میکنیم.
+
+            \vspace*{-1em}
+
+            \[
+              \expected{m_t}=\expected{(1-\beta_1)\sum_{i=1}^{t}\beta_1^{t-i}g_i}=\expected[g_t]\cdot(1-\beta_1)\sum_{i=1}^{t}\beta_1^{t-i} + \zeta = \expected{g_t}(1-\beta_2^t)+\zeta
+            \]
+
+            \splitqsolve
+
+            حال میتوان دید که اگر بر $\frac{1}{1-\beta_1^t}$ تقسیم کنیم، آنگاه $\hat{m}_t$ تخمینی بر گرادیان واقعی میزند.
+
+            شهود در زمان $t=1$ : 
+
+            \[
+                m_1=\beta m_0 + (1-\beta)g_t \longrightarrow \hat{m}_1=\frac{m_1-\beta m_0}{1-\beta}=\frac{m_1}{1-\beta}  
+            \]
+          \end{qsolve}
+	      }
+\end{enumerate}

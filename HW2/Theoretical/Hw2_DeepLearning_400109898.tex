@@ -1,0 +1,43 @@
+\documentclass[12pt]{article}
+\usepackage{blindtext}
+\usepackage[bordered]{uni-style}
+\usepackage{uni-math}
+\usepackage{uni-code}
+\usepackage{pgfplots}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{color,soul}
+\usepackage{wrapfig}
+\usepackage{capt-of}
+
+\usepackage{xepersian}
+\settextfont{Yas}
+
+\title{یادگیری عمیق}
+\prof{دکتر فاطمی زاده}
+\subject{تمرین 2}
+\info{
+    \begin{tabular}{lr}
+        برنا خدابنده& 400109898\\
+    \end{tabular}
+}
+\date{\today}
+\department{مهندسی برق}
+
+
+\begin{document}
+\maketitlepage
+\maketitlestart
+
+\section{سوالات نظری}
+
+\foreach \x in {1,2,...,6}{
+    \input{questions/Q\x.tex}
+    \clearpage
+}
+
+\begin{latin}
+    \bibliographystyle{ieeetr}
+    \bibliography{refs.bib}
+\end{latin}
+
+\end{document}

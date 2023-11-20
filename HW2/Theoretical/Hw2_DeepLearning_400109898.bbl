@@ -1,0 +1,21 @@
+\begin{thebibliography}{1}
+
+\bibitem{tsukada2023relationship}
+Y.~Tsukada and H.~Iiduka, ``Relationship between batch size and number of steps
+  needed for nonconvex optimization of stochastic gradient descent using armijo
+  line search,'' 2023.
+
+\bibitem{luo2019understanding}
+P.~Luo, X.~Wang, W.~Shao, and Z.~Peng, ``Towards understanding regularization
+  in batch normalization,'' 2019.
+
+\bibitem{teye2018bayesian}
+M.~Teye, H.~Azizpour, and K.~Smith, ``Bayesian uncertainty estimation for batch
+  normalized deep networks,'' 2018.
+
+\bibitem{yao2021adahessian}
+Z.~Yao, A.~Gholami, S.~Shen, M.~Mustafa, K.~Keutzer, and M.~W. Mahoney,
+  ``Adahessian: An adaptive second order optimizer for machine learning,''
+  2021.
+
+\end{thebibliography}
