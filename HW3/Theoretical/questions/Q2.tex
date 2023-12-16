@@ -1,0 +1,95 @@
+\section{سوال 2}
+
+فرض کنید دیتاستی داریم شامل تصاویر رنگی به اندازه ۱۲۸ × .۱۲۸ میخواهیم یک شبکه عصبی کانولوشن
+برای آن طراحی کنیم.
+
+\begin{itemize}
+	\item {
+	      اندازه خروجی و تعداد پارامترهای لایه اول کانولوشن را محاسبه کنید اگر ۱۶ فیلتر ۵× ۵
+	      با ۱ = stride و ۲ = padding داشته باشیم.
+	      }
+
+	      \begin{qsolve}[]
+		      \begin{minipage}[l]{0.69\linewidth}
+			      عکس با استفاده از فیلتر $3\times3$ است و ورودی های $5\times5$ ولی برای شهود کمک کننده است.
+
+			      \begin{align*}
+				      \text{parameters}       & =16\times5\times5+16=416          \\
+				      \text{\lr{output size}} & =16\times(128+2\cdot2-(5-1))^2 \\
+				                              & =16\times128\times128=262,144
+			      \end{align*}
+		      \end{minipage}
+		      \begin{minipage}[r]{0.3\linewidth}
+			      \includegraphics*[width=\linewidth]{pics/conv-pad-stride.png}
+		      \end{minipage}
+	      \end{qsolve}
+	\item {
+	      فرض کنید هر لایه، ۳ قسمت شامل : کانولوشن، pooling max و تابع فعالسازی (ReLU) را دارا
+	      می باشد، که لایه های کانولوشنی، هر کدام شامل ۱۶ فیلتر ۵× ۵ با ۱ = stride و ۲ = padding و
+	      لایەهای pooling max همگی ۲ × ۲ با ۲ = stride هستند. ۳ لایه با این مشخصات را پشت سر
+	      هم در نظر بگیرید. اندازه تنسور در لایه خروجی نهایی و تعداد پارامترهای این ۳ لایه را حساب کنید.
+
+	      \begin{qsolve}[]
+		      همانطور که مشاهده شد، لایه های کانولوشن با سایز $5\times5$ با $padding=2$ به صورت \lr{same size} کار میکنند، حال کافیست لایه های
+		      max-pooling را در نظر بگیریم.
+
+		      لایه های max-pooling با \lr{stride=2, $2\times2$} به این صورت اند که ابعاد ورودی را نصف میکنند. پس سایز هر لایه به صورت زیر خواهد بود.
+		      \begin{multline*}
+			      16\times128\times128\xrightarrow{\text{conv}}16\times128\times128\xrightarrow{\text{pooling}}16\times64\times64\\
+			      \xrightarrow{\text{conv}}16\times64\times64\xrightarrow{\text{pooling}}16\times32\times32\\
+			      \xrightarrow{\text{conv}}16\times32\times32\xrightarrow{\text{pooling}}16\times16\times16
+		      \end{multline*}
+
+		      پس خروجی سایز $16\times16\times16$ را دارد.
+
+		      برای تعداد پارامتر نیز، تعداد پارامتر فیلتر ها را باید شمرد، که هر لایه کانولوشنی تعداد $16\times5\times5$ پارامتر دارد.
+
+		      \[
+			      \text{parameters}=3\times16\times5\times5+16=3\times400+16=1216
+		      \]
+	      \end{qsolve}
+	      }
+	\item {
+	      فرض کنید هدف، حل یک مسئله classification، که شامل ۱۰ دسته هست،می باشد.تعداد کل پارامترهای
+	      شبکه را در این حالت حساب کنید.
+
+	      \begin{qsolve}[]
+		      ساده ترین کاری که میتوان کرد، این است که صرفا خروجی فیچر های بدست آمده از سوی لایه های کانولوشنی را
+		      با استفاده از یک لایه خطی، به حالت طبقه بندی با softMax در آوریم. در این صورت:
+
+		      \[
+			      \text{classifier parameters} = 16\times16\times16\times10 + 10 = 40970
+		      \]
+
+		      \splitqsolve
+		      که در این صورت کل پارامتر ها مقدار 42170 پارامتر خواهد شد، برای کاهش پارامتر،  میتوانیم در این لایه آخر نیز pooling انجام دهیم.
+		      برای مثال اکر از \lr{Global Average pooling} در سطح کانال استفاده کنیم، تغداد پارامتر به صورت زیر خواهد بود
+
+		      \[
+			      \text{classifier parameters}_{GAP} = 16\times10 + 10 = 170
+		      \]
+
+		      که تعداد کل پارامتر را به 1370 تقلیل میدهد، که البته احتمالا برای این مسئله کم باشد.
+	      \end{qsolve}
+	      }
+	\item {
+	      در این قسمت، با یک مفهوم مهم آشنا می شویم. field Receptive بیانگر این است که نورون خروجی،
+	      تحت تاثیر چه مقدار از نورون های ورودی می باشد. در حقیقت تعیین می کند هر نورون خروجی از چه
+	      ناحیەای با چه اندازەای از تنسور ورودی تاثیر می پذیرد. حال field Receptive را برای یک نورون
+	      خروجی لایه سوم ( قبل از لایه connected fully ( بررسی کنید. (برای فهم بهتر این مفهوم میتوانید به
+	      این \href{https://blog.mlreview.com/a-guide-to-receptive-field-arithmetic-for-convolutional-neural-networks-e0f514068807?gi=9a91fd9bda2d}{لینک} مراجعه کنید)
+
+	      \begin{qsolve}[]
+		      \includegraphics*[width=\linewidth]{pics/receptive.png}
+		      طبق اینکه داریم $s=1$ برای تمام لایه ها، در هر لایه خواهیم داشت:
+		      \[
+			      r_{out}=r_{in}+(k-1),\quad k:\text{kernel size}
+		      \]
+		      در نتیجه برای \lr{receptive field} لایه سوم خواهیم داشت:
+		      \[
+			      r_3 = 1 + 3\times(5-1)= 1 + 12 = 13
+		      \]
+		      پس یک قسمت $13\times13$ از عکس اصلی را میبیند.
+	      \end{qsolve}
+	      }
+\end{itemize}

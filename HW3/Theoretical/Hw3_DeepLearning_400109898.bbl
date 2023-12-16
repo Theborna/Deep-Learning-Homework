@@ -1,0 +1,11 @@
+\begin{thebibliography}{1}
+
+\bibitem{huang2018densely}
+G.~Huang, Z.~Liu, L.~van~der Maaten, and K.~Q. Weinberger, ``Densely connected
+  convolutional networks,'' 2018.
+
+\bibitem{ronneberger2015unet}
+O.~Ronneberger, P.~Fischer, and T.~Brox, ``U-net: Convolutional networks for
+  biomedical image segmentation,'' 2015.
+
+\end{thebibliography}
